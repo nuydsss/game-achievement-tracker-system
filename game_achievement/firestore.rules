@@ -1,0 +1,121 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- helpers ----------
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+    function validUsername(u) {
+      return u is string && u.matches('^[a-z0-9_]{3,20}$');
+    }
+
+    // ---------- players/{authUid} ----------
+    match /players/{uid} {
+      allow read: if isOwner(uid);
+
+      allow create: if isOwner(uid)
+        && request.resource.data.keys().hasOnly(
+             ['player_id', 'username', 'email', 'display_name', 'status', 'date_created'])
+        && request.resource.data.player_id == uid
+        && validUsername(request.resource.data.username)
+        && request.resource.data.status == 'active'
+        && request.resource.data.display_name is string
+        && request.resource.data.display_name.size() > 0
+        && request.resource.data.display_name.size() <= 30
+        && request.resource.data.date_created == request.time
+        && getAfter(/databases/$(database)/documents/usernames/$(request.resource.data.username)).data.uid == uid;
+
+      // Only display_name and photo_url may change (status/username/email are locked).
+      allow update: if isOwner(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['display_name', 'photo_url'])
+        && request.resource.data.display_name is string
+        && request.resource.data.display_name.size() > 0
+        && request.resource.data.display_name.size() <= 30
+        && (!('photo_url' in request.resource.data) || request.resource.data.photo_url is string);
+
+      allow delete: if false;
+    }
+
+    // ---------- usernames/{username} (Firestore has no UNIQUE index) ----------
+    match /usernames/{username} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && validUsername(username)
+        && request.resource.data.keys().hasOnly(['uid'])
+        && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // ---------- catalog: read-only for apps (seeded with the Admin SDK) ----------
+    match /games/{gameId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+    match /achievements/{achievementId} {
+      allow read: if signedIn();
+      allow write: if false;
+    }
+
+    // ---------- player_games/{playerUid_gameId} ----------
+    function validEntry(d) {
+      return d.keys().hasOnly(
+               ['player_game_id', 'player_id', 'game_id', 'playtime_hours',
+                'status', 'total_points_earned', 'date_added'])
+        && d.playtime_hours is number && d.playtime_hours >= 0
+        && d.status in ['playing', 'completed', 'dropped', 'on_hold']
+        && d.total_points_earned is number && d.total_points_earned >= 0;
+    }
+
+    match /player_games/{entryId} {
+      allow get: if signedIn()
+        && (resource == null || resource.data.player_id == request.auth.uid);
+      allow list: if signedIn() && resource.data.player_id == request.auth.uid;
+
+      allow create: if signedIn()
+        && request.resource.data.player_id == request.auth.uid
+        && entryId == request.auth.uid + '_' + request.resource.data.game_id
+        && request.resource.data.player_game_id == entryId
+        && request.resource.data.total_points_earned == 0
+        && validEntry(request.resource.data)
+        && exists(/databases/$(database)/documents/games/$(request.resource.data.game_id));
+
+      allow update: if signedIn()
+        && resource.data.player_id == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['playtime_hours', 'status', 'total_points_earned'])
+        && validEntry(request.resource.data);
+
+      allow delete: if signedIn() && resource.data.player_id == request.auth.uid;
+    }
+
+    // ---------- player_achievements/{playerGameId_achievementId} ----------
+    function validProgress(d) {
+      return d.keys().hasOnly(
+               ['player_achievement_id', 'player_game_id', 'achievement_id', 'player_id',
+                'progress_percent', 'is_unlocked', 'date_unlocked'])
+        && d.progress_percent is number
+        && d.progress_percent >= 0 && d.progress_percent <= 100
+        && d.is_unlocked is bool
+        && d.is_unlocked == (d.progress_percent == 100);
+    }
+
+    match /player_achievements/{paId} {
+      allow get: if signedIn()
+        && (resource == null || resource.data.player_id == request.auth.uid);
+      allow list: if signedIn() && resource.data.player_id == request.auth.uid;
+
+      allow create, update: if signedIn()
+        && request.resource.data.player_id == request.auth.uid
+        && paId == request.resource.data.player_game_id + '_' + request.resource.data.achievement_id
+        && request.resource.data.player_achievement_id == paId
+        && validProgress(request.resource.data)
+        && get(/databases/$(database)/documents/player_games/$(request.resource.data.player_game_id)).data.player_id == request.auth.uid;
+
+      allow delete: if signedIn() && resource.data.player_id == request.auth.uid;
+    }
+  }
+}

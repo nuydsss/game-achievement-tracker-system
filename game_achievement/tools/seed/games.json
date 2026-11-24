@@ -1,0 +1,41 @@
+[
+  {
+    "game_id": "GAME-G001",
+    "game_code": "G001",
+    "game_name": "Elden Ring",
+    "genre": "Action RPG",
+    "developer": "FromSoftware",
+    "total_achievements": 2,
+    "tags": [
+      "souls-like",
+      "open-world",
+      "singleplayer"
+    ]
+  },
+  {
+    "game_id": "GAME-G002",
+    "game_code": "G002",
+    "game_name": "Hollow Knight",
+    "genre": "Metroidvania",
+    "developer": "Team Cherry",
+    "total_achievements": 2,
+    "tags": [
+      "metroidvania",
+      "2d",
+      "singleplayer"
+    ]
+  },
+  {
+    "game_id": "GAME-G003",
+    "game_code": "G003",
+    "game_name": "Stardew Valley",
+    "genre": "Simulation",
+    "developer": "ConcernedApe",
+    "total_achievements": 2,
+    "tags": [
+      "farming",
+      "relaxing",
+      "co-op"
+    ]
+  }
+]

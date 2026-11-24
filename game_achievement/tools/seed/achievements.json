@@ -1,0 +1,56 @@
+[
+  {
+    "achievement_id": "ACH-001",
+    "game_id": "GAME-G001",
+    "achievement_name": "Elden Lord",
+    "description": "Become the Elden Lord",
+    "points": 100,
+    "difficulty": "hard",
+    "is_hidden": false
+  },
+  {
+    "achievement_id": "ACH-002",
+    "game_id": "GAME-G001",
+    "achievement_name": "Rennala Defeated",
+    "description": "Defeat Rennala",
+    "points": 30,
+    "difficulty": "medium",
+    "is_hidden": false
+  },
+  {
+    "achievement_id": "ACH-003",
+    "game_id": "GAME-G002",
+    "achievement_name": "Dream No More",
+    "description": "Defeat the Radiance",
+    "points": 75,
+    "difficulty": "legendary",
+    "is_hidden": false
+  },
+  {
+    "achievement_id": "ACH-004",
+    "game_id": "GAME-G002",
+    "achievement_name": "Mask Collector",
+    "description": "Collect all mask shards",
+    "points": 40,
+    "difficulty": "medium",
+    "is_hidden": false
+  },
+  {
+    "achievement_id": "ACH-005",
+    "game_id": "GAME-G003",
+    "achievement_name": "Greenhorn",
+    "description": "Ship your first harvest",
+    "points": 10,
+    "difficulty": "easy",
+    "is_hidden": false
+  },
+  {
+    "achievement_id": "ACH-006",
+    "game_id": "GAME-G003",
+    "achievement_name": "Full House",
+    "description": "Get married and have two kids",
+    "points": 50,
+    "difficulty": "medium",
+    "is_hidden": false
+  }
+]

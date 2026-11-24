@@ -1,0 +1,8 @@
+{
+  "name": "game-tracker-seed",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Seeds the games and achievements catalog into Cloud Firestore",
+  "scripts": { "seed": "node seed.js" },
+  "dependencies": { "firebase-admin": "^12.0.0" }
+}

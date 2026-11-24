@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "729122383792",
+    "project_id": "game-achievement-tracker-cae5d",
+    "storage_bucket": "game-achievement-tracker-cae5d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:729122383792:android:bd197208de323f5674d875",
+        "android_client_info": {
+          "package_name": "com.example.game_achievement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPUN1OcWGN87Fykiwni66woitQupIeEa0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
